@@ -19,28 +19,49 @@ function App() {
 
   const handleFormData = (e) => {
     e.preventDefault();
+    const cannotSubmit = data.some((item, key) => {
+      return item.inputs.some((input) => {
+        if (!input.validation) return false;
+        let value = formData[input.name];
+        const result = isInputNotValid(value, input.validation);
+        if (result == true) setErrors({ ...errors, [input.name]: true })
+        else setErrors({ ...errors, [input.name]: false })
+        return result;
+      })
+    })
+    if (cannotSubmit == true) return;
     console.log(formData);
     setSuccess(!success);
+  }
+
+  const isInputNotValid = (value, validation) => {
+    return Object.keys(validation).some((key) => {
+      switch (key) {
+        case 'required':
+          if (value === "") return true
+        case 'maxLength':
+          if (!value || value.length > validation.maxLength) return true
+        case 'minLength':
+          if (!value || value.length < validation.minLength) return true
+      }
+    });
   }
 
   const handleValidation = (validation, name, e) => {
     if (!validation) return
     let value = formData[name];
 
-    let isNotValid = Object.keys(validation).some((key) => {
-      switch (key) {
-        case 'required':
-          if (value === "") return true
-        case 'maxLenght':
-          if (value.length > validation.maxLength) return true
-        case 'minLength':
-          if (value.length < validation.minLength) return true
-      }
-    });
+    let isNotValid = isInputNotValid(value, validation);
     if (isNotValid == true) {
       setErrors({
         ...errors,
         [name]: true
+      })
+    }
+    else {
+      setErrors({
+        ...errors,
+        [name]: false
       })
     }
   }
