@@ -5,11 +5,9 @@ const Summary = ({ props }) => {
     return (
         <Card>
             <h2 className="text-center">Summary</h2>
-            {Object.entries(props).map((item, index) => (
-                <div className="mb-2" key={index}>{item}</div>
+            {Object.keys(props).map((key, index) => (
+                <div className="mb-2" key={index}>{`${key}:${props[key]}`}</div>
             ))}
-
-            <div></div>
         </Card>
     )
 }
